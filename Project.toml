@@ -1,7 +1,10 @@
 name = "Immortal"
-uuid = "73a7468c-4a9f-4e7d-9739-48a54ee98a4d"
+uuid = "7e70e6b1-cd01-4477-bffb-6df788447f4e"
 authors = ["Dmitrii Shevelev"]
 version = "0.1.0"
+
+[deps]
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
 julia = "1"
