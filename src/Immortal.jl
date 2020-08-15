@@ -1,12 +1,28 @@
 module Immortal
-    # Write your package code here
-    include("Librarian.jl")
-    import .Librarian
+    include("Rabbit.jl")
+    import .Rabbit
+
 
     """
-        Function for test run HTTP server.
+        Функция для запуска сервера для работы с Rabbit
     """
-    function test3_fn()
-         Librarian.run_server()
+    function run(login::String, password::String, vhost::String, port::Int64)
+        host::String = "api.seon.cloud"
+        is_connected::Bool = false
+
+        i::Int16 = 0
+        connection = nothing
+
+        try
+            auth_params::Dict = Rabbit.get_auth_params(login, password)
+            connection = Rabbit.get_rabbitmq_connection(vhost, host, port, auth_params)
+            chanel = Rabbit.get_chanel(connection, nothing, true)
+            is_connected = true
+            println(chanel)
+            Rabbit.shotdown(connection)
+        catch e
+            print(e)
+            exit()
+        end
     end
 end
