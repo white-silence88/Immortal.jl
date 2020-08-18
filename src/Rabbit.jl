@@ -6,7 +6,11 @@ module Rabbit
     """
         Функция закрывает соединение
     """
-    function shotdown(conection)
+    function shotdown(conection::AMQPClient.MessageChannel)
+        @info "Вызывана функция остановки сервера..."
+        # Логер для режима отладки
+        @debug "Параметры вызова функции:"
+        @debug "> соединение с сервером очередей RabbitMQ" conection
         # Проверяем открыто ли соединение на данный момент
         if AMQPClient.isopen(conection)
             # Закрываем соединение
@@ -18,15 +22,27 @@ module Rabbit
 
 
     """
-        Функция создания канала внутри коннекта к RabbitMQ
+        Функция создания канала для соединения RabbitMQ
     """
-    function get_chanel(connection, chanid, create)
+    function get_chanel(connection::AMQPClient.MessageChannel, chanid::Union{String, Nothing}, create::Bool)::AMQPClient.MessageChannel
+        @info "Вызвана функция создания канала для соединения в очереди на сервисе очередей..."
+        # Логерд для режима отладки
+        @debug "Параметры вызова функции:"
+        @debug "> соединение с сервисом очередей" connection
+        @debug "> идентификатор канала" chanid
+        @debug "> необходимость создания канала (если его нет)" create
+        # Инициализируем идентификатор канала.
+        # Если он передан в параметрах функции - то присваиваем его
+        # Если он не передан в параметрах функции - то генерим начение
         chanell_id = chanid == nothing ? AMQPClient.UNUSED_CHANNEL : chanid
-        result = nothing
+        # Создаем новый канал для соединения
         try
-            result = AMQPClient.channel(connection, chanell_id, create)
+            result::AMQPClient.MessageChannel = AMQPClient.channel(connection, chanell_id, create)
+            @info "Канал успешно создан!"
+            return result
         catch error
-            println("Not finded chanel")
+            @debug "Ошибка при создании канала" error
+            throw(error)
         end
         return result
     end
@@ -34,29 +50,51 @@ module Rabbit
     """
         Функция для получения параметров авторизации на RabbitMQ
     """
-    function get_auth_params(login::String, password::String)
+    function get_auth_params(login::String, password::String)::Dict{String, Any}
+        @info "Вызвана функция сборки параметров соединеня с сервисом очередей..."
+        @debug "Параметры вызова функции:"
+        @debug "> имя пользователя на сервисе очередей" login
+        @debug "> пароль пользователя на сервисе очередей" password
+        # Задаём механиз соединения по умолчанию
         mechanism::String = "AMQPLAIN"
-
-        auth_params = Dict{String, Any}(
+        @debug "> механизм соединеня на сервисе очередей" mechanism
+        # Создаём словарь с параметрами авторизации на сервисе очередей
+        # Важно! Тип данного словаря должен быть именно {String, Any}!
+        # При смене типа словаря параметров соединене с сервером отказывается
+        # устаналиваться.
+        #Такой тип задан в файле:
+        # * https://github.com/JuliaComputing/AMQPClient.jl/blob/master/src/auth.jl
+        return Dict{String, Any}(
             "MECHANISM" => mechanism,
             "LOGIN" => login,
             "PASSWORD" => password
         )
-
-        return auth_params
     end
 
     """
-        Функция для получения коннекта на RabbitMQ
+        Функция для получения установки соединения с сервером RabbitMQ
     """
-    function get_rabbitmq_connection(vhost::String, host::String, port::Int64, auth_params::Dict)
-        connection = AMQPClient.connection(
-            ;virtualhost=vhost,
-            host=host,
-            port=port,
-            auth_params=auth_params
-        )
-
-        return connection
+    function get_rabbitmq_connection(vhost::String, host::String, port::Int64, auth_params::Dict{String, Any})::AMQPClient.MessageChannel
+        @info "Вызвана функция соединения с сервером очередей RabbitMQ..."
+        # Логе для режима отладки
+        @debug "Параметры вызова функции:"
+        @debug "> виртуальный хост" vhost
+        @debug "> хост сервера RabbitMQ" host
+        @debug "> порт сервера RabbitMQ" port
+        @debug "> параметры авторизации на сервере RabbitMQ" auth_params
+        # Получаем соединение с сервером очередей RabbitMQ
+        try
+            result::AMQPClient.MessageChannel = AMQPClient.connection(
+                ;virtualhost=vhost,
+                host=host,
+                port=port,
+                auth_params=auth_params
+            )
+            @info "Соединене успешно установлено!"
+            return result
+        catch error
+            @error "Не удалось установить соединене с RabbitMQ. Ошибка" error
+            throw(error)
+        end
     end
 end
