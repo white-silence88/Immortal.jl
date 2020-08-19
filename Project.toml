@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 AMQPClient = "79c8b4cd-a41a-55fa-907c-fab5288e1383"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
