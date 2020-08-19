@@ -35,6 +35,23 @@ module Immortal
             connection = Rabbit.get_rabbitmq_connection(vhost, host, port, auth_params)
             # Создаём канал для работы с сервисом очередей
             chanel = Rabbit.get_chanel(connection, nothing, true)
+            # Создаём обменник
+            exchanger::Dict{String, Any} = Rabbit.declare_exchange(chanel, "test", "direct")
+            # Регистрируем очередь внутри виртуалхоста
+            queue_1::Dict{String, Any} = Rabbit.declare_queue(chanel, "MyFirstQueue")
+            queue_2::Dict{String, Any} = Rabbit.declare_queue(chanel, "MySecondQueue")
+            q1_name::Any = get(queue_1, "NAME", nothing)
+            q2_name::Any = get(queue_2, "NAME", nothing)
+            queue_1_deleted::Dict{String, Any} = Rabbit.delete_queue(chanel, q1_name)
+
+            exchanger_name::Any = get(exchanger, "NAME", nothing)
+            route::Dict{String, Any} = Rabbit.bind_queue(chanel, q2_name, exchanger_name, "MyTestRoute")
+            route_name::Any = get(route, "NAME", nothing)
+            purge_messages = Rabbit.purge_queue(chanel, q2_name)
+            reoute_deleted::Bool = Rabbit.unbind_queue(chanel, q2_name, exchanger_name, route_name)
+            # Удаление обменника
+            exchange_deleted::Bool = Rabbit.delete_exchange(chanel, exchanger_name)
+
             # Меняем значение статуса соединеня
             is_connected = true
         catch error
