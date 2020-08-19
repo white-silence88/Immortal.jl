@@ -47,6 +47,10 @@ module Immortal
             exchanger_name::Any = get(exchanger, "NAME", nothing)
             route::Dict{String, Any} = Rabbit.bind_queue(chanel, q2_name, exchanger_name, "MyTestRoute")
             route_name::Any = get(route, "NAME", nothing)
+
+            example_data = "Hello, world"
+            msg = Rabbit.create_message(example_data)
+
             purge_messages = Rabbit.purge_queue(chanel, q2_name)
             reoute_deleted::Bool = Rabbit.unbind_queue(chanel, q2_name, exchanger_name, route_name)
             # Удаление обменника

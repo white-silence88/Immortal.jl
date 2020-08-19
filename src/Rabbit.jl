@@ -3,7 +3,22 @@ module Rabbit
     import .Chronometer
 
     using AMQPClient
-    export get_auth_params, get_rabbitmq_connection, get_chanel, shotdown, declare_exchange, declare_queue, delete_queue, bind_queue, unbind_queue, purge_queue
+    export get_auth_params, get_rabbitmq_connection, get_chanel, shotdown, declare_exchange, declare_queue, delete_queue, bind_queue, unbind_queue, purge_queue, create_message
+
+    """
+        Функция создания собощения для сервера RabbitMQ
+    """
+    function create_message(data::Any)::AMQPClient.Message
+        data_to_send = Vector{UInt8}(data)
+        try
+            result = AMQPClient.Message(data_to_send)
+            return result
+        catch error
+            @error "Создание сообщения завершилось ошибкой" error
+            throw(error)
+        end
+        return result
+    end
 
     """
         Функция очистки очереди
