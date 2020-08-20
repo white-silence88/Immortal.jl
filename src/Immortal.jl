@@ -3,9 +3,19 @@ module Immortal
     include("Chronometer.jl")
     import .Chronometer
 
-    # Подключаем библиотеку, связанную с сервисом работы очередей RabbitMQ
+    # Подключаем библиотеку для работы с RabbitMQ и каналами
     include("Rabbit.jl")
     import .Rabbit
+    # Подключаем библиотеку для работы с обменником
+    include("Exchange.jl")
+    import .Exchange
+    # Подключаем библиотеку для работы с очередью
+    include("Queue.jl")
+    import .Queue
+    # Подключаем библиотеку для работы с сообщениями
+    include("Message.jl")
+    import .Message
+
 
 
     """
@@ -32,29 +42,31 @@ module Immortal
             # Получаем параметры автризации на сервисе очередей
             auth_params::Dict{String, Any} = Rabbit.get_auth_params(login, password)
             # Получаем соединени с сервером очередей
-            connection = Rabbit.get_rabbitmq_connection(vhost, host, port, auth_params)
+            connection = Rabbit.get_connection(vhost, host, port, auth_params)
             # Создаём канал для работы с сервисом очередей
-            chanel = Rabbit.get_chanel(connection, nothing, true)
+            chanel = Rabbit.get_channel(connection, nothing, true)
             # Создаём обменник
-            exchanger::Dict{String, Any} = Rabbit.declare_exchange(chanel, "test", "direct")
+            exchanger::Dict{String, Any} = Exchange.declare(chanel, "test", "direct")
             # Регистрируем очередь внутри виртуалхоста
-            queue_1::Dict{String, Any} = Rabbit.declare_queue(chanel, "MyFirstQueue")
-            queue_2::Dict{String, Any} = Rabbit.declare_queue(chanel, "MySecondQueue")
+            queue_1::Dict{String, Any} = Queue.declare(chanel, "MyFirstQueue")
+            queue_2::Dict{String, Any} = Queue.declare(chanel, "MySecondQueue")
+            #
             q1_name::Any = get(queue_1, "NAME", nothing)
             q2_name::Any = get(queue_2, "NAME", nothing)
-            queue_1_deleted::Dict{String, Any} = Rabbit.delete_queue(chanel, q1_name)
-
+            #
+            queue_1_deleted::Dict{String, Any} = Queue.delete(chanel, q1_name)
+            #
             exchanger_name::Any = get(exchanger, "NAME", nothing)
-            route::Dict{String, Any} = Rabbit.bind_queue(chanel, q2_name, exchanger_name, "MyTestRoute")
+            route::Dict{String, Any} = Queue.bind(chanel, q2_name, exchanger_name, "MyTestRoute")
             route_name::Any = get(route, "NAME", nothing)
 
             example_data = "Hello, world"
-            msg = Rabbit.create_message(example_data)
+            msg = Message.create(example_data)
 
-            purge_messages = Rabbit.purge_queue(chanel, q2_name)
-            reoute_deleted::Bool = Rabbit.unbind_queue(chanel, q2_name, exchanger_name, route_name)
+            purge_messages = Queue.purge(chanel, q2_name)
+            reoute_deleted::Bool = Queue.unbind(chanel, q2_name, exchanger_name, route_name)
             # Удаление обменника
-            exchange_deleted::Bool = Rabbit.delete_exchange(chanel, exchanger_name)
+            exchange_deleted::Bool = Exchange.delete(chanel, exchanger_name)
 
             # Меняем значение статуса соединеня
             is_connected = true
