@@ -1,13 +1,66 @@
 module Queue
+    include("Consumers.jl")
+    import .Consumers
+
     include("Chronometer.jl")
     import .Chronometer
 
     using AMQPClient
 
-    export delete, declare, bind, unbind, purge
+    export delete, declare, bind, unbind, purge, unsubscribe, subscribe
 
+    """Функция подписки на сообщения очереди.
+
+
+    channel: канал связи с сервисом очередей
+    queue_name: имя очереди в сервисе очередей
+    user_consumer_reaction: пользовательская функция консьюмера
     """
-        Функция очистки очереди
+    function subscribe(channel::AMQPClient.MessageChannel, queue_name::String, user_consumer_reaction::Function)::Bool
+        @info Chronometer.message_with_time("Вызвана операция подписки на очередь $queue_name")
+        # Логирование для режима отладки
+        @debug "Параметры вызова функции:"
+        @debug "> канал соединения с серверов RabbitMQ " channel
+        @debug "> имя очереди " queue_name
+        @debug "> функция консьюмера пользователя " user_consumer_reaction
+        try
+            consumer(message) = Consumers.base_consumer(channel, message, user_consumer_reaction)
+            @debug "Итоговый консьюмер " consumer
+            success, consumer_tag = AMQPClient.basic_consume(channel, queue_name, consumer)
+            @debug "Результат выполненя подписки " success
+            @debug "Тег консьюмера " consumer_tag
+            @assert success
+            @info Chronometer.message_with_time("Зарегистрирован консьюмер с тегом $consumer_tag")
+            return success
+        catch error
+            @error Chronometer.message_with_time("Не удалось подписаться на сообщения очереди ") error
+        end
+    end
+
+    """ Функция, которая позволяет отписаться от прослушивания очереди.
+
+
+    channel: канал связи с сервисом очередей, 
+    consume_tag: тег консьюмера
+    """
+    function unsubscribe(channel::AMQPClient.MessageChannel, consume_tag::String)::Bool
+        @info Chronometer.message_with_time("Вызвана функция отписки консьюмера от очереди")
+        @debug "Параметры вызова функции:"
+        @debug "> канал соединения с серверов RabbitMQ " channel
+        @debug "> тег консьюмера " consume_tag
+        try
+            return AMQPClient.basic_cancel(channel, consume_tag)
+        catch error
+            @error Chronometer.message_with_time("Не удалось отписаться от очереди, возникла ошибка ") error
+            throw(error)
+        end
+    end
+
+    """Функция очистки очереди.
+
+
+    channel: канал связи с сервисом очередей, 
+    queue_name: имя очереди
     """
     function purge(channel::AMQPClient.MessageChannel, queue_name::String)::Dict{String, Any}
         # Вызываем функция логирования
@@ -43,8 +96,13 @@ module Queue
         end
     end
 
-    """
-        Функция, которая позволяет отвязать очередь от маршрута
+    """Функция, которая позволяет отвязать очередь от маршрута.
+
+
+    channel: канал связи с сервисом очередей, 
+    queue_name: имя очереди, 
+    exchanger_name: имя обменника,
+    route_name: имя маршрута
     """
     function unbind(channel::AMQPClient.MessageChannel, queue_name::String, exchanger_name::String, route_name)::Bool
         # Вызываем функця логирования
@@ -73,8 +131,13 @@ module Queue
         end
     end
 
-    """
-        Функция связывание очереди и маршрута
+    """Функция связывание очереди и маршрута.
+
+
+    channel: канал связи с сервисом очередей, 
+    queue_name: имя очереди,
+    exchanger_name: имя обменнника, 
+    route_name: имя маршрута
     """
     function bind(channel::AMQPClient.MessageChannel, queue_name::Any, exchanger_name::Any, route_name::String)::Dict{String, Any}
         # Выводим информационное сообщение в логер
@@ -112,8 +175,11 @@ module Queue
         end
     end
 
-    """
-        Функция регистрации очереди
+    """Функция регистрации очереди.
+
+
+    channel: канал связи с сервисом очередей
+    queue_id: идетификатор очереди
     """
     function declare(channel::AMQPClient.MessageChannel, queue_id::String)::Dict{String, Any}
         # Выводим информационное сообщение в терминал
@@ -157,8 +223,11 @@ module Queue
         end
     end
 
-    """
-        Функция удаления очереди
+    """Функция удаления очереди.
+
+
+    channel: канал связи с сервисом очередей
+    queue_id: идетификатор очереди
     """
     function delete(channel::AMQPClient.MessageChannel, queue_id::Any)::Dict{String, Any}
         # Выводим информационное сообщение

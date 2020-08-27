@@ -18,8 +18,13 @@ module Immortal
 
 
 
-    """
-        Функция для запуска сервера для работы с Rabbit
+    """Функция для запуска сервера для работы с Rabbit.
+
+
+    login: логин пользователя на сервисе очередей, 
+    password: пароль пользователя на сервисе очередей, 
+    vhost: вируальный хост на сервисе очередей, 
+    port: порт подключения для сервиса очередей
     """
     function run(login::String, password::String, vhost::String, port::Int64)
         @info Chronometer.message_with_time("Вызвана функция запуска сервера...")
@@ -61,7 +66,15 @@ module Immortal
             route_name::Any = get(route, "NAME", nothing)
 
             example_data = "Hello, world"
-            msg = Message.create(example_data)
+            msg_props = Dict{String, Any}(
+                "CONTENT_TYPE" => "plain/text"
+            )
+            publish_result = Message.create_and_publish(chanel, exchanger_name, route_name, example_data, msg_props)
+
+            user_consumer(message) = println(message)
+            subscribe_queue = Queue.subscribe(chanel, q2_name, user_consumer)
+
+            unsubscrive_queue = Queue.unsubscribe(chanel, "some_tag")
 
             purge_messages = Queue.purge(chanel, q2_name)
             reoute_deleted::Bool = Queue.unbind(chanel, q2_name, exchanger_name, route_name)

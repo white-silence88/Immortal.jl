@@ -8,8 +8,11 @@ module Exchange
 
     export declare, delete
 
-    """
-        Функция удаления обменника
+    """Функция удаления обменника.
+
+
+    channel: канал связи с сервисом сообщений,
+    exchange_id: идентификатор обменника
     """
     function delete(channel::AMQPClient.MessageChannel, exchange_id::String)::Bool
         # Выводим информационное сообщение
@@ -37,8 +40,12 @@ module Exchange
         end
     end
 
-    """
-        Функция регистрации обменника
+    """Функция регистрации обменника.
+
+
+    channel: сканал связи с сервисом сообщений,  
+    exc_id: идентификатор обменника, 
+    exc_type: тип обменника
     """
     function declare(channel::AMQPClient.MessageChannel, exc_id::String, exc_type::String)::Dict{String, Any}
         # Выводим информационное сообщение

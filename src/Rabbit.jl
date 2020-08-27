@@ -6,8 +6,10 @@ module Rabbit
 
     export shotdown, get_channel, get_auth_params, get_connection
 
-    """
-        Функция закрывает соединение
+    """Функция закрывает соединение.
+
+
+    connection: активное соединение с сервисом очередей
     """
     function shotdown(conection::AMQPClient.MessageChannel)
         # Выводим информационное сообщение
@@ -25,8 +27,12 @@ module Rabbit
     end
 
 
-    """
-        Функция создания канала для соединения RabbitMQ
+    """Функция создания канала для соединения RabbitMQ.
+
+
+    connection: активное соединение с сервисом очередей, 
+    chanid: идентификатор канала, 
+    create: опция, которая показывает требуется ли создать канал, если его не существует
     """
     function get_channel(connection::AMQPClient.MessageChannel, chanid::Union{String, Nothing}, create::Bool)::AMQPClient.MessageChannel
         #
@@ -55,8 +61,11 @@ module Rabbit
         end
     end
 
-    """
-        Функция для получения параметров авторизации на RabbitMQ
+    """Функция для получения параметров авторизации на RabbitMQ.
+
+
+    login: логин пользователя на сервисе очередей, 
+    password: пароль от пользователя на сервисе очередей
     """
     function get_auth_params(login::String, password::String)::Dict{String, Any}
         # Выводим информационное сообщение
@@ -84,8 +93,12 @@ module Rabbit
         return result
     end
 
-    """
-        Функция для получения установки соединения с сервером RabbitMQ
+    """Функция для получения установки соединения с сервером RabbitMQ.
+
+    vhost: виртуальный хост на сервисе очередей,  
+    host: хост для подключенияя к сервису очередей, 
+    port: порт для подключения к сервису очередей,
+    auth_params: параметры авторизации на сервисе очередей
     """
     function get_connection(vhost::String, host::String, port::Int64, auth_params::Dict{String, Any})::AMQPClient.MessageChannel
         #
