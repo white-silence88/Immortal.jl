@@ -1,6 +1,6 @@
-module Exchange
+module Exchanges
     # Подключаем библиотеку, связанную с временем
-    include("Chronometer.jl")
+    include("../Chronometer.jl")
     import .Chronometer
 
 

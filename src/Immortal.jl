@@ -6,16 +6,6 @@ module Immortal
     # Подключаем библиотеку для работы с RabbitMQ и каналами
     include("Rabbit.jl")
     import .Rabbit
-    # Подключаем библиотеку для работы с обменником
-    include("Exchange.jl")
-    import .Exchange
-    # Подключаем библиотеку для работы с очередью
-    include("Queue.jl")
-    import .Queue
-    # Подключаем библиотеку для работы с сообщениями
-    include("Message.jl")
-    import .Message
-
 
 
     """Функция для запуска сервера для работы с Rabbit.
@@ -51,35 +41,35 @@ module Immortal
             # Создаём канал для работы с сервисом очередей
             chanel = Rabbit.get_channel(connection, nothing, true)
             # Создаём обменник
-            exchanger::Dict{String, Any} = Exchange.declare(chanel, "test", "direct")
+            exchanger::Dict{String, Any} = Rabbit.Exchanges.declare(chanel, "test", "direct")
             # Регистрируем очередь внутри виртуалхоста
-            queue_1::Dict{String, Any} = Queue.declare(chanel, "MyFirstQueue")
-            queue_2::Dict{String, Any} = Queue.declare(chanel, "MySecondQueue")
+            queue_1::Dict{String, Any} = Rabbit.Queues.declare(chanel, "MyFirstQueue")
+            queue_2::Dict{String, Any} = Rabbit.Queues.declare(chanel, "MySecondQueue")
             #
             q1_name::Any = get(queue_1, "NAME", nothing)
             q2_name::Any = get(queue_2, "NAME", nothing)
             #
-            queue_1_deleted::Dict{String, Any} = Queue.delete(chanel, q1_name)
+            queue_1_deleted::Dict{String, Any} = Rabbit.Queues.delete(chanel, q1_name)
             #
             exchanger_name::Any = get(exchanger, "NAME", nothing)
-            route::Dict{String, Any} = Queue.bind(chanel, q2_name, exchanger_name, "MyTestRoute")
+            route::Dict{String, Any} = Rabbit.Queues.bind(chanel, q2_name, exchanger_name, "MyTestRoute")
             route_name::Any = get(route, "NAME", nothing)
 
             example_data = "Hello, world"
             msg_props = Dict{String, Any}(
                 "CONTENT_TYPE" => "plain/text"
             )
-            publish_result = Message.create_and_publish(chanel, exchanger_name, route_name, example_data, msg_props)
+            publish_result = Rabbit.Messages.create_and_publish(chanel, exchanger_name, route_name, example_data, msg_props)
 
             user_consumer(message) = println(message)
-            subscribe_queue = Queue.subscribe(chanel, q2_name, user_consumer)
+            subscribe_queue = Rabbit.Queues.subscribe(chanel, q2_name, user_consumer)
 
-            unsubscrive_queue = Queue.unsubscribe(chanel, "some_tag")
+            unsubscrive_queue = Rabbit.Queues.unsubscribe(chanel, "some_tag")
 
-            purge_messages = Queue.purge(chanel, q2_name)
-            reoute_deleted::Bool = Queue.unbind(chanel, q2_name, exchanger_name, route_name)
+            purge_messages = Rabbit.Queues.purge(chanel, q2_name)
+            reoute_deleted::Bool = Rabbit.Queues.unbind(chanel, q2_name, exchanger_name, route_name)
             # Удаление обменника
-            exchange_deleted::Bool = Exchange.delete(chanel, exchanger_name)
+            exchange_deleted::Bool = Rabbit.Exchanges.delete(chanel, exchanger_name)
 
             # Меняем значение статуса соединеня
             is_connected = true

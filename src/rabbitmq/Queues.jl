@@ -1,8 +1,8 @@
-module Queue
+module Queues
     include("Consumers.jl")
     import .Consumers
 
-    include("Chronometer.jl")
+    include("../Chronometer.jl")
     import .Chronometer
 
     using AMQPClient

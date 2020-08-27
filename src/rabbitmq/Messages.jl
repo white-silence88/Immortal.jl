@@ -1,5 +1,5 @@
-module Message
-    include("Chronometer.jl")
+module Messages
+    include("../Chronometer.jl")
     import .Chronometer
 
     using AMQPClient

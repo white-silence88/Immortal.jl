@@ -1,6 +1,17 @@
 module Rabbit
+    # Подключаем библиотеку, связанную с временем
     include("Chronometer.jl")
     import .Chronometer
+
+    # Подключаем библиотеку для работы с обменником
+    include("./rabbitmq/Exchanges.jl")
+    import .Exchanges
+    # Подключаем библиотеку для работы с очередью
+    include("./rabbitmq/Queues.jl")
+    import .Queues
+    # Подключаем библиотеку для работы с сообщениями
+    include("./rabbitmq/Messages.jl")
+    import .Messages
 
     using AMQPClient
 
