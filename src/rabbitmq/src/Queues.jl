@@ -2,8 +2,8 @@ module Queues
     include("Consumers.jl")
     import .Consumers
 
-    include("../Chronometer.jl")
-    import .Chronometer
+    include("../../utils/Utils.jl")
+    import .Utils
 
     using AMQPClient
 
@@ -17,7 +17,7 @@ module Queues
     user_consumer_reaction: пользовательская функция консьюмера
     """
     function subscribe(channel::AMQPClient.MessageChannel, queue_name::String, user_consumer_reaction::Function)::Bool
-        @info Chronometer.message_with_time("Вызвана операция подписки на очередь $queue_name")
+        @info Utils.Chronometer.message_with_time("Вызвана операция подписки на очередь $queue_name")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ " channel
@@ -30,10 +30,10 @@ module Queues
             @debug "Результат выполненя подписки " success
             @debug "Тег консьюмера " consumer_tag
             @assert success
-            @info Chronometer.message_with_time("Зарегистрирован консьюмер с тегом $consumer_tag")
+            @info Utils.Chronometer.message_with_time("Зарегистрирован консьюмер с тегом $consumer_tag")
             return success
         catch error
-            @error Chronometer.message_with_time("Не удалось подписаться на сообщения очереди ") error
+            @error Utils.Chronometer.message_with_time("Не удалось подписаться на сообщения очереди ") error
         end
     end
 
@@ -44,14 +44,14 @@ module Queues
     consume_tag: тег консьюмера
     """
     function unsubscribe(channel::AMQPClient.MessageChannel, consume_tag::String)::Bool
-        @info Chronometer.message_with_time("Вызвана функция отписки консьюмера от очереди")
+        @info Utils.Chronometer.message_with_time("Вызвана функция отписки консьюмера от очереди")
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ " channel
         @debug "> тег консьюмера " consume_tag
         try
             return AMQPClient.basic_cancel(channel, consume_tag)
         catch error
-            @error Chronometer.message_with_time("Не удалось отписаться от очереди, возникла ошибка ") error
+            @error Utils.Chronometer.message_with_time("Не удалось отписаться от очереди, возникла ошибка ") error
             throw(error)
         end
     end
@@ -64,7 +64,7 @@ module Queues
     """
     function purge(channel::AMQPClient.MessageChannel, queue_name::String)::Dict{String, Any}
         # Вызываем функция логирования
-        @info Chronometer.message_with_time("Вызвана функция очистки очериди...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция очистки очериди...")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ" channel
@@ -91,7 +91,7 @@ module Queues
             )
         catch error
             # Обрабатываем исключение. Выводим его в терминал и кидаем ошибку
-            @error Chronometer.message_with_time("Очистка очереди завершилась с ошибкой ") error
+            @error Utils.Chronometer.message_with_time("Очистка очереди завершилась с ошибкой ") error
             throw(error)
         end
     end
@@ -106,7 +106,7 @@ module Queues
     """
     function unbind(channel::AMQPClient.MessageChannel, queue_name::String, exchanger_name::String, route_name)::Bool
         # Вызываем функця логирования
-        @info Chronometer.message_with_time("Вызвана функция отвызывания от очереди...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция отвызывания от очереди...")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ" channel
@@ -126,7 +126,7 @@ module Queues
             return result
         catch error
             # Обрабатываем ошибку: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Возникла ошибка при отвязывание")
+            @error Utils.Chronometer.message_with_time("Возникла ошибка при отвязывание")
             throw(error)
         end
     end
@@ -141,7 +141,7 @@ module Queues
     """
     function bind(channel::AMQPClient.MessageChannel, queue_name::Any, exchanger_name::Any, route_name::String)::Dict{String, Any}
         # Выводим информационное сообщение в логер
-        @info Chronometer.message_with_time("Вызвана функция связывания с очередью")
+        @info Utils.Chronometer.message_with_time("Вызвана функция связывания с очередью")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ" channel
@@ -170,7 +170,7 @@ module Queues
             )
         catch error
             # Обрабатываем ошибки: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Возникла ошибка при связывании")
+            @error Utils.Chronometer.message_with_time("Возникла ошибка при связывании")
             throw(error)
         end
     end
@@ -183,7 +183,7 @@ module Queues
     """
     function declare(channel::AMQPClient.MessageChannel, queue_id::String)::Dict{String, Any}
         # Выводим информационное сообщение в терминал
-        @info Chronometer.message_with_time("Вызвана функция регистрации очереди...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция регистрации очереди...")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ" channel
@@ -218,7 +218,7 @@ module Queues
             )
         catch error
             # Обрабатываем ошибки: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Регистрация очереди завершилась ошибкой ") error
+            @error Utils.Chronometer.message_with_time("Регистрация очереди завершилась ошибкой ") error
             throw(error)
         end
     end
@@ -231,7 +231,7 @@ module Queues
     """
     function delete(channel::AMQPClient.MessageChannel, queue_id::Any)::Dict{String, Any}
         # Выводим информационное сообщение
-        @info Chronometer.message_with_time("Запущена функуция удаления очереди...")
+        @info Utils.Chronometer.message_with_time("Запущена функуция удаления очереди...")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ" channel
@@ -257,7 +257,7 @@ module Queues
             )
         catch error
             # Обрабатываем ошибки: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Удаление очереди завершилось ошибкой ") error
+            @error Utils.Chronometer.message_with_time("Удаление очереди завершилось ошибкой ") error
             throw(error)
         end
     end

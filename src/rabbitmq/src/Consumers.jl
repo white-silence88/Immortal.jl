@@ -1,4 +1,7 @@
 module Consumers
+    include("../../utils/Utils.jl")
+    import .Utils
+
     using AMQPClient
 
     export base_consumer
@@ -22,7 +25,7 @@ module Consumers
             AMQPClient.basic_ack(channel, message.delivery_tag)
             return true
         catch error
-            @error Chronometer.message_with_time("Не удалось отреагировать") error
+            @error Utils.Chronometer.message_with_time("Не удалось отреагировать") error
             throw(error)
         end
     end

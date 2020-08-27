@@ -1,16 +1,16 @@
 module Rabbit
     # Подключаем библиотеку, связанную с временем
-    include("Chronometer.jl")
-    import .Chronometer
+    include("../utils/Utils.jl")
+    import .Utils
 
     # Подключаем библиотеку для работы с обменником
-    include("./rabbitmq/Exchanges.jl")
+    include("./src/Exchanges.jl")
     import .Exchanges
     # Подключаем библиотеку для работы с очередью
-    include("./rabbitmq/Queues.jl")
+    include("./src/Queues.jl")
     import .Queues
     # Подключаем библиотеку для работы с сообщениями
-    include("./rabbitmq/Messages.jl")
+    include("./src/Messages.jl")
     import .Messages
 
     using AMQPClient
@@ -24,7 +24,7 @@ module Rabbit
     """
     function shotdown(conection::AMQPClient.MessageChannel)
         # Выводим информационное сообщение
-        @info Chronometer.message_with_time("Вызывана функция остановки сервера...")
+        @info Utils.Chronometer.message_with_time("Вызывана функция остановки сервера...")
         # Логер для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> соединение с сервером очередей RabbitMQ" conection
@@ -47,7 +47,7 @@ module Rabbit
     """
     function get_channel(connection::AMQPClient.MessageChannel, chanid::Union{String, Nothing}, create::Bool)::AMQPClient.MessageChannel
         #
-        @info Chronometer.message_with_time("Вызвана функция создания канала для соединения в очереди на сервисе очередей...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция создания канала для соединения в очереди на сервисе очередей...")
         # Логерд для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> соединение с сервисом очередей" connection
@@ -67,7 +67,7 @@ module Rabbit
             return result
         catch error
             # Обрабатываем ошибки: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Ошибка при создании канала") error
+            @error Utils.Chronometer.message_with_time("Ошибка при создании канала") error
             throw(error)
         end
     end
@@ -80,7 +80,7 @@ module Rabbit
     """
     function get_auth_params(login::String, password::String)::Dict{String, Any}
         # Выводим информационное сообщение
-        @info Chronometer.message_with_time("Вызвана функция сборки параметров соединеня с сервисом очередей...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция сборки параметров соединеня с сервисом очередей...")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> имя пользователя на сервисе очередей" login
@@ -113,7 +113,7 @@ module Rabbit
     """
     function get_connection(vhost::String, host::String, port::Int64, auth_params::Dict{String, Any})::AMQPClient.MessageChannel
         #
-        @info Chronometer.message_with_time("Вызвана функция соединения с сервером очередей RabbitMQ...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция соединения с сервером очередей RabbitMQ...")
         # Логе для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> виртуальный хост" vhost
@@ -135,7 +135,7 @@ module Rabbit
             return result
         catch error
             # Обрабатываем ошибки: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Не удалось установить соединене с RabbitMQ. Ошибка") error
+            @error Utils.Chronometer.message_with_time("Не удалось установить соединене с RabbitMQ. Ошибка") error
             throw(error)
         end
     end

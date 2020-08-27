@@ -1,6 +1,6 @@
 module Messages
-    include("../Chronometer.jl")
-    import .Chronometer
+    include("../../utils/Utils.jl")
+    import .Utils
 
     using AMQPClient
 
@@ -37,7 +37,7 @@ module Messages
             AMQPClient.basic_publish(channel, message; exchange=exchanger, routing_key=route)
             return true
         catch error
-            @error Chronometer.message_with_time("Создание и отправка сообщения завершилось ошибой") error
+            @error Utils.Chronometer.message_with_time("Создание и отправка сообщения завершилось ошибой") error
             throw(error)
         end
     end

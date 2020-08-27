@@ -1,7 +1,7 @@
 module Exchanges
     # Подключаем библиотеку, связанную с временем
-    include("../Chronometer.jl")
-    import .Chronometer
+    include("../../utils/Utils.jl")
+    import .Utils
 
 
     using AMQPClient
@@ -16,7 +16,7 @@ module Exchanges
     """
     function delete(channel::AMQPClient.MessageChannel, exchange_id::String)::Bool
         # Выводим информационное сообщение
-        @info Chronometer.message_with_time("Запущена функция удаления обменника...")
+        @info Utils.Chronometer.message_with_time("Запущена функция удаления обменника...")
         # Логе для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с серверов RabbitMQ" channel
@@ -35,7 +35,7 @@ module Exchanges
             return result
         catch error
             #
-            @error Chronometer.message_with_time("Удаление обменника завершилось ошибкой ") error
+            @error Utils.Chronometer.message_with_time("Удаление обменника завершилось ошибкой ") error
             throw(error)
         end
     end
@@ -49,7 +49,7 @@ module Exchanges
     """
     function declare(channel::AMQPClient.MessageChannel, exc_id::String, exc_type::String)::Dict{String, Any}
         # Выводим информационное сообщение
-        @info Chronometer.message_with_time("Запущена функция регистрации обменника...")
+        @info Utils.Chronometer.message_with_time("Запущена функция регистрации обменника...")
         # Логерд для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> канал соединения с сервером RabbitMQ" channel
@@ -90,7 +90,7 @@ module Exchanges
             )
         catch error
             # Обрабатываем ошибки: выводим в терминал и кидаем исключение
-            @error Chronometer.message_with_time("Удаление обменника завершилось ошибкой") error
+            @error Utils.Chronometer.message_with_time("Удаление обменника завершилось ошибкой") error
             throw(error)
         end
     end

@@ -1,10 +1,10 @@
 module Immortal
     # Подключаем библиотеку, связанную с временем
-    include("Chronometer.jl")
-    import .Chronometer
+    include("./utils/Utils.jl")
+    import .Utils
 
     # Подключаем библиотеку для работы с RabbitMQ и каналами
-    include("Rabbit.jl")
+    include("./rabbitmq/Rabbit.jl")
     import .Rabbit
 
 
@@ -17,7 +17,7 @@ module Immortal
     port: порт подключения для сервиса очередей
     """
     function run(login::String, password::String, vhost::String, port::Int64)
-        @info Chronometer.message_with_time("Вызвана функция запуска сервера...")
+        @info Utils.Chronometer.message_with_time("Вызвана функция запуска сервера...")
         # Задаём значение хоста по умолчанию
         host::String = "api.seon.cloud"
         # Логер вызова функции для режима отладки
@@ -74,7 +74,7 @@ module Immortal
             # Меняем значение статуса соединеня
             is_connected = true
         catch error
-            @error Chronometer.message_with_time("Завершение работы сервера. Ошибка") error
+            @error Utils.Chronometer.message_with_time("Завершение работы сервера. Ошибка") error
             exit()
         end
 
