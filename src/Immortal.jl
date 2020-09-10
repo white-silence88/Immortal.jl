@@ -7,7 +7,6 @@ module Immortal
     include("./rabbitmq/Rabbit.jl")
     import .Rabbit
 
-
     """Функция для запуска сервера для работы с Rabbit.
 
 
