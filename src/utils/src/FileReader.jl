@@ -26,7 +26,7 @@ module FileReader
             result = JSON.parse(data)
             @debug "Результат парсинга JSON строки" result
         catch error
-            @error "Не удалось прочитать JSON файл. Ошибка: " error
+            @error Chronometer.message_with_time("Не удалось прочитать JSON файл. Ошибка: ") error
         end
         return result
     end
