@@ -57,9 +57,6 @@ module Immortal
 
             results = nothing
 
-            queues_field::String = "queues"
-            exchangers_field::String = "exchangers"
-
             names = keys(channels_config)
             for name in names
                 channel_config = get(channels_config, name, nothing)

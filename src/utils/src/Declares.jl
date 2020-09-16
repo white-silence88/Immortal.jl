@@ -50,6 +50,9 @@ module Declares
         exchangers = nothing
         queues = nothing
 
+        queues_field::String = "queues"
+        exchangers_field::String = "exchangers"
+
         if channel_config !== nothing && channel !== nothing
             exchangers_list = get(channel_config, exchangers_field, nothing)
             queues_list = get(channel_config, queues_field, nothing)
