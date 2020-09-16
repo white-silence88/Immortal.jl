@@ -31,15 +31,17 @@ module Getters
     end
 
     function channel_to_add(channel, exchangers, queues)
+        result = nothing
+
         if channel !== nothing
-            return Dict{String, Any}(
-               "channel" => channel,
+            result = Dict{String, Any}(
+                "channel" => channel,
                 "exchangers" => exchangers,
                 "queues" => queues
             )
-        else 
-            return nothing
         end
+
+        return result
     end
 
     function module_name(some_module)
