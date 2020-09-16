@@ -27,6 +27,8 @@ module ConfigReader
             @error Chronometer.message_with_time("Произошла ошибка при запуске сервера") error
             throw(error)
         end
+
+        return config
     end
     
     function get_configs(path::String)
@@ -34,7 +36,7 @@ module ConfigReader
 
         rabbit_config::Union{Dict{String, Any}, Nothing} = nothing
         channels_config::Union{Dict{String, Any}, Nothing} = nothing
-        broker_config::Union{Dict{String, Any}, Nothing} = nothing
+        broker_config::Union{Dict{String, Any}, Nothing} = nothingg
 
         broker_field::String = "broker"
         channels_field::String = "channels"
