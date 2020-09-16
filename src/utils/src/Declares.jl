@@ -36,7 +36,7 @@ module Declares
             if name !== nothing
                 exchanger::Dict{String, Any} = Adapter.Exchanges.declare(channel, name, type)
                 if exchangers === nothing
-                    exchangers = Dict{String, Any} = Dict{String, Any}(name => exchanger)
+                    exchangers = Dict{String, Any}(name => exchanger)
                 else
                     push!(exchangers, name => exchanger)
                 end
