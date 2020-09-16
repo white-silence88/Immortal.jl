@@ -44,7 +44,7 @@ module FileReader
         if file_path !== nothing
             try
                 @debug "Пытаемся прочитать содержимое файла"
-                result = YAML.load_file(file_path; dicttype=()->DefaultDict{String,Any}(Missing))
+                result = YAML.load_file(file_path; dicttype=Dict{String,Any})
                 @debug "Результат чтения содержимого файла" result
             catch error
                 @error Chronometer.message_with_time("Произошла ошибка при чтении файла $file_path") error
