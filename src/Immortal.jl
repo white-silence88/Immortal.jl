@@ -69,7 +69,7 @@ module Immortal
                     if results === nothing
                         results = Dict{String, Dict{String, Any}}(name => channel_to_add)
                     else
-                        push!(results, name => channel_to_add)
+                        push!(resultsg, name => channel_to_add)
                     end
                 end
             end
