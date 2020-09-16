@@ -36,7 +36,7 @@ module ConfigReader
 
         rabbit_config::Union{Dict{String, Any}, Nothing} = nothing
         channels_config::Union{Dict{String, Any}, Nothing} = nothing
-        broker_config::Union{Dict{String, Any}, Nothing} = nothingg
+        broker_config::Union{Dict{String, Any}, Nothing} = nothing
 
         broker_field::String = "broker"
         channels_field::String = "channels"
