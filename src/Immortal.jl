@@ -66,10 +66,10 @@ module Immortal
                 channel_to_add = Utils.Getters.channel_to_add(channel, exchangers, queues)
 
                 if channel_to_add !== nothing 
-                    if channels === nothing
-                        channels = Dict{String, Dict{String, Any}}(name => channel_to_add)
+                    if results === nothing
+                        results = Dict{String, Dict{String, Any}}(name => channel_to_add)
                     else
-                        push!(channels, name => channel_to_add)
+                        push!(results, name => channel_to_add)
                     end
                 end
             end
