@@ -56,7 +56,7 @@ module Rabbit
         # Инициализируем идентификатор канала.
         # Если он передан в параметрах функции - то присваиваем его
         # Если он не передан в параметрах функции - то генерим начение
-        channel_id = chanid == nothing ? AMQPClient.UNUSED_CHANNEL : chanid
+        channel_id = chanid == nothing ? AMQPClient.UNUSED_CHANNEL : parse(Int64, chanid)
         # Создаем новый канал для соединения
         try
             # Выполняем операцию создания/поиска канала
