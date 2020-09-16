@@ -58,7 +58,7 @@ module Declares
             queues_list = get(channel_config, queues_field, nothing)
 
             exchangers_dict = exchangers(channel, exchangers_list, Adapter)
-            queues_dict = queues(channel, queues, Adapter)
+            queues_dict = queues(channel, queues_list, Adapter)
         end
 
         return exchangers_dict, queues_dict
