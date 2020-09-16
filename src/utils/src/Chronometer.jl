@@ -9,6 +9,7 @@ module Chronometer
     message: сообщение, которое требуется обогатить датой и временем
     """
     function message_with_time(message)::String
+        #TODO: добавить логер
         return string("<", Dates.now(), "> ", message)
     end
 end

@@ -4,4 +4,13 @@ module Utils
 
     include("./src/FileReader.jl")
     import .FileReader
+
+    include("./src/ConfigReader.jl")
+    import .ConfigReader
+
+    include("./src/Getters.jl")
+    import .Getters
+
+    include("./src/Declares.jl")
+    import .Declares
 end

@@ -21,7 +21,7 @@ module Consumers
         @debug "> функция консьюмера пользователя " user_consumer_reaction
         try
             @debug "Запускается пользовательская операция обработки реакции " user_consumer_reaction
-            user_consumer_reaction(message)
+            user_consumer_reaction(channel, message)
             AMQPClient.basic_ack(channel, message.delivery_tag)
             return true
         catch error

@@ -78,15 +78,13 @@ module Rabbit
     login: логин пользователя на сервисе очередей, 
     password: пароль от пользователя на сервисе очередей
     """
-    function get_auth_params(login::String, password::String)::Dict{String, Any}
+    function get_auth_params(login::String, password::String, mechanism::String)::Dict{String, Any}
         # Выводим информационное сообщение
         @info Utils.Chronometer.message_with_time("Вызвана функция сборки параметров соединеня с сервисом очередей...")
         # Логирование для режима отладки
         @debug "Параметры вызова функции:"
         @debug "> имя пользователя на сервисе очередей" login
         @debug "> пароль пользователя на сервисе очередей" password
-        # Задаём механиз соединения по умолчанию
-        mechanism::String = "AMQPLAIN"
         @debug "> механизм соединеня на сервисе очередей" mechanism
         # Создаём словарь с параметрами авторизации на сервисе очередей
         # Важно! Тип данного словаря должен быть именно {String, Any}!
