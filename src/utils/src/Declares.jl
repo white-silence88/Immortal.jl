@@ -47,8 +47,8 @@ module Declares
     end
 
     function in_channel(channel, channel_config, Adapter)
-        exchangers = nothing
-        queues = nothing
+        exchangers_dict = nothing
+        queues_dict = nothing
 
         queues_field::String = "queues"
         exchangers_field::String = "exchangers"
@@ -57,10 +57,10 @@ module Declares
             exchangers_list = get(channel_config, exchangers_field, nothing)
             queues_list = get(channel_config, queues_field, nothing)
 
-            exchangers = exchangers(channel, exchangers_list, Adapter)
-            queues = queues(channel, queues, Adapter)
+            exchangers_dict = exchangers(channel, exchangers_list, Adapter)
+            queues_dict = queues(channel, queues, Adapter)
         end
 
-        return exchangers, queues
+        return exchangers_dict, queues_dict
     end
 end
