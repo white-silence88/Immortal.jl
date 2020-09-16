@@ -63,8 +63,8 @@ module Immortal
 
                 channel = Utils.Getters.channel(connection, name, true, Adapter)
                 exchangers, queues = Utils.Declares.in_channel(channel, channel_config, Adapter)
-                channel_to_add = Utils.Getters.channel_to_add(channel, exchangers, queues)
                 exit()
+                channel_to_add = Utils.Getters.channel_to_add(channel, exchangers, queues)
                 if channel_to_add !== nothing 
                     if results === nothing
                        results = Dict{String, Dict{String, Any}}(name => channel_to_add)

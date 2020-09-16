@@ -34,7 +34,11 @@ module Getters
         result = nothing
 
         if channel !== nothing
-            result = Dict{String, Any}()
+            result = Dict{String, Any}(
+                "channel" => mechanism,
+                "exchangers" => login,
+                "queues" => password
+            )
         end
 
         return result
