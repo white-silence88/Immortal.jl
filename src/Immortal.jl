@@ -9,25 +9,42 @@ module Immortal
 
     export init, declares, get_adapter
 
-    function get_adapter(value)
-        adapter = nothing
-        adapter_name = nothing
-        value_type = typeof(value)
+    """ Функция получения адаптера для сервера очередей
 
+    value: словарь настроек брокера или имя адаптера сервера очередей
+    """
+    function get_adapter(value)
+        @info Utils.Chronometer.message_with_time("Вызвана функция получения адаптера брокера сообщений/очередей...")
+        @debug "Параметры вызова функции:"
+        @debug "> параметр для получения адаптера брокера" value
+        adapter = nothing
+        @debug "Инициализирован параметр adapter с пустым значением"
+        adapter_name = nothing
+        @debug "Инициализирован параметр adapter_name с пустым значением"
+        value_type = typeof(value)
+        @debug "Получили тип переданного в функцию параметра" value_type
+        @debug "Сопоставляем тип переданного параметра. В зависимости от него продоим вычисление параматра adapter_name"
         if value_type === String
+            @debug "Тип переданного значения определился как строка. Считаем переданное значение именем адаптера" value
             adapter_name = value
         elseif value_type == Dict{String, Any}
+            @debug "Тип переданного значения опредилился как словарь (String, Any). Получаем имя адаптера из словаря"
             adapter_name = get(value, "adapter", "rabbit")
         else 
+            @debug "Нет корретного значеня типа. Считаем имя адаптера - пустым"
             adapter_name = nothing
         end
 
+        @debug "По имени адаптера присваиваем модуль"
         if adapter_name === "rabbit"
+            @debug "Адаптеру соответствует модуль для работы с RabbitMQ"
             adapter = Rabbit
         else
+            @debug "Нет совпадений модулей адаптеров"
             adapter = nothing
         end
 
+        @debug "Возвразаем адаптер" adapter
         return adapter
     end
 

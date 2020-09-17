@@ -35,9 +35,9 @@ module Getters
 
         if channel !== nothing
             result = Dict{String, Any}(
-                "channel" => channel,
-                "exchangers" => exchangers,
-                "queues" => queues
+                "CHANNEL" => channel,
+                "EXCHANGERS" => exchangers,
+                "QUEUES" => queues  
             )
         end
 
