@@ -2,11 +2,11 @@ module Declares
 
     # Импортируем бибилиотеку работы со временем
     include("Chronometer.jl")
-    import .Chronometer
+import .Chronometer
 
     export queues, exchangers, in_channel
 
-    """ Функция регистрации очередей по именам.
+    """Функция регистрации очередей по именам.
 
     channel: канал связи с брокером
     queues_names: список имён очередей
@@ -16,12 +16,12 @@ module Declares
         @info Chronometer.message_with_time("Выполняется функция регистрации очередей...")
 
         @debug "Параметры вызова функции:"
-        @debug "> канал связи с брокером" channel
-        @debug "> список имён очередей" queues_names
-        @debug "> адаптер брокера очередей" Adapter
+        @debug "- канал связи с брокером" channel
+        @debug "- список имён очередей" queues_names
+        @debug "- адаптер брокера очередей" Adapter
 
+        @debug "Инициализируем пустой список очередей"
         queues = nothing 
-        @debug "Инициализируем пустой список очередей" queues
 
         @debug "Перебираем имена очередей и регистрируем каждую"
         for name in queues_names
@@ -45,7 +45,8 @@ module Declares
         return queues
     end
 
-    """ Функция регистрации обменников.
+
+    """Функция регистрации обменников.
 
     channel: канал связи с брокером
     exchanger_config: конфигурация обменников
@@ -59,8 +60,8 @@ module Declares
         @debug "- конфигурации обменников канала" exchangers_configs
         @debug "- адаптер брокера очередей" Adapter
 
+        @debug "Инициализируем пустое значение словаря обменников"
         exchangers = nothing
-        @debug "Инициализируем пустое значение словаря обменников" exchangers
         
         name_field::String = "name"
         @debug "Имя поля наименования обменника" name_field
@@ -76,7 +77,7 @@ module Declares
             @debug "> Имя обменника из конфигурации" name
 
             type = get(exchanger_config, type_field, "direct")
-            @debug "> Тим обменника из конфигурации" type
+            @debug "> Тип обменника из конфигурации" type
 
             if name !== nothing
                 exchanger::Dict{String, Any} = Adapter.Exchanges.declare(channel, name, type)
@@ -96,7 +97,8 @@ module Declares
         return exchangers
     end
 
-    """ Функця регистрации очередей и обмеников в канале
+
+    """Функция регистрации очередей и обмеников в канале
 
     channel: канал связи с брокером
     channel_config: конфигурация канала
@@ -111,11 +113,11 @@ module Declares
         @debug "- адаптер брокера" Adapter
 
 
+        @debug "Задаём пустое значение для зарегистрированных обменников"
         exchangers_dict = nothing
-        @debug "Задаём пустое значение для зарегистрированных обменников" exchangers_dict
 
+        @debug "Задаём пустое значене для зарегистрированных очередей"
         queues_dict = nothing
-        @debug "Задаём пустое значене для зарегистрированных очередей" queues_dict
 
         queues_field::String = "queues"
         exchangers_field::String = "exchangers"

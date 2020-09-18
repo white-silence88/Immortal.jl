@@ -30,20 +30,6 @@ module Getters
         return adapter, mechanism, login, password, host, port, virtual_host
     end
 
-    function channel_to_add(channel, exchangers, queues)
-        result = nothing
-
-        if channel !== nothing
-            result = Dict{String, Any}(
-                "CHANNEL" => channel,
-                "EXCHANGERS" => exchangers,
-                "QUEUES" => queues  
-            )
-        end
-
-        return result
-    end
-
     function module_name(some_module)
         return last(fullname(some_module))
     end

@@ -15,7 +15,7 @@ module Rabbit
 
     using AMQPClient
 
-    export shotdown, get_channel, get_auth_params, get_connection
+    export shotdown, get_channel, get_auth_params, get_connection, get_channel_id
 
     """Функция закрывает соединение.
 
@@ -56,7 +56,7 @@ module Rabbit
         # Инициализируем идентификатор канала.
         # Если он передан в параметрах функции - то присваиваем его
         # Если он не передан в параметрах функции - то генерим начение
-        channel_id = chanid == nothing ? AMQPClient.UNUSED_CHANNEL : parse(Int64, chanid)
+        channel_id = chanid === nothing ? AMQPClient.UNUSED_CHANNEL : parse(Int64, chanid)
         # Создаем новый канал для соединения
         try
             # Выполняем операцию создания/поиска канала
@@ -136,5 +136,9 @@ module Rabbit
             @error Utils.Chronometer.message_with_time("Не удалось установить соединене с RabbitMQ. Ошибка") error
             throw(error)
         end
+    end
+
+    function get_channel_id(name::String)::Int64
+        return parse(Int64, name)
     end
 end
