@@ -12,7 +12,7 @@ YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
 
 [compat]
 AMQPClient = "0.3"
-Revise = "2.7"
+Revise = "2.7, 3.1"
 julia = "1"
 
 [extras]
